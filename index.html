@@ -420,7 +420,7 @@ async function doSearch() {
       body: JSON.stringify({
         _pw: savedPw,
         model: 'claude-sonnet-4-5',
-        max_tokens: 4000,
+        max_tokens: 1500,
         system: SYSTEM_PROMPT,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: `Search recent news about: ${keyword}` }],
