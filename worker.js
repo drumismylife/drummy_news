@@ -34,7 +34,7 @@ export default {
     let articles;
     try {
       const naverRes = await fetch(
-        `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(keyword)}&display=7&sort=date`,
+        `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(keyword)}&display=5&sort=date`,
         {
           headers: {
             'X-Naver-Client-Id':     env.NAVER_CLIENT_ID,
@@ -78,7 +78,7 @@ ${articleList}`;
         },
         body: JSON.stringify({
           model:      "claude-haiku-4-5-20251001",
-          max_tokens: 1500,
+          max_tokens: 2500,
           messages:   [{ role: "user", content: prompt }],
         }),
       });
