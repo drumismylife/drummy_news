@@ -317,10 +317,8 @@
 // ══════════════════════════════════════════════
 //  CONFIG
 // ══════════════════════════════════════════════
-const STORAGE_KEY  = 'daily_brief_proxy_url';
-const PW_KEY       = 'daily_brief_pw';
-// ── Worker URL (본인 Worker 주소로 교체) ──
-const WORKER_URL   = 'https://drummy-news-proxy.drumismylife.workers.dev';
+const PW_KEY     = 'daily_brief_pw';
+const WORKER_URL = 'https://drummy-news-proxy.drumismylife.workers.dev';
 const CATEGORY_COLORS = {
   Politics:    '#c0392b', Economy:     '#16a085',
   Technology:  '#2980b9', Science:     '#8e44ad',
@@ -336,10 +334,6 @@ const COUNTRY_FLAGS   = {
   canada:'🇨🇦', brazil:'🇧🇷', russia:'🇷🇺', italy:'🇮🇹',
   spain:'🇪🇸', netherlands:'🇳🇱', sweden:'🇸🇪', singapore:'🇸🇬',
 };
-
-const SYSTEM_PROMPT = `You are a news assistant. Find 5 recent news articles on the given topic from diverse sources.
-Return ONLY a JSON array with no extra text:
-[{"title":"...","source":"...","country":"...","date":"...","summary":"2 sentence Korean summary","category":"Politics|Economy|Technology|Science|Society|Culture|Sports|Health|Environment","url":"...","sentiment":"positive|neutral|negative"}]`;
 
 // ══════════════════════════════════════════════
 //  STATE
@@ -404,14 +398,7 @@ async function doSearch() {
     const response = await fetch(WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        _pw: savedPw,
-        model: 'claude-sonnet-4-5',
-        max_tokens: 1200,
-        system: SYSTEM_PROMPT,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: `Search recent news about: ${keyword}` }],
-      }),
+      body: JSON.stringify({ _pw: savedPw, keyword }),
     });
 
     if (response.status === 401) {
