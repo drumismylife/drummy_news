@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Daily Brief</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,400;1,700&family=Noto+Serif+KR:wght@400;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:ital,wght@0,400;0,500&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset & Base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --paper:    #f4efe4;
@@ -18,27 +17,19 @@
       --rule:     #c8bea8;
       --accent:   #8b1a1a;
       --serif:    'Playfair Display', Georgia, serif;
-      --mono:     'Courier Prime', 'Courier New', monospace;
-      --korean:   'Noto Serif KR', Georgia, serif;
+      --sans:     'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      --mono:     'DM Mono', 'Courier New', monospace;
     }
     html { scroll-behavior: smooth; }
-    body {
-      background: var(--paper);
-      color: var(--ink);
-      font-family: var(--serif);
-      min-height: 100vh;
-    }
+    body { background: var(--paper); color: var(--ink); font-family: var(--sans); min-height: 100vh; }
 
-    /* ── Noise texture overlay ── */
     body::before {
       content: '';
       position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      background-size: 180px 180px;
-      opacity: 0.6;
+      background-size: 180px 180px; opacity: 0.6;
     }
 
-    /* ── Layout ── */
     .wrapper { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 0 32px 80px; }
 
     /* ── Masthead ── */
@@ -48,31 +39,24 @@
       position: sticky; top: 0; z-index: 100;
       background: var(--paper);
     }
-    .masthead-top {
-      display: flex; justify-content: space-between; align-items: flex-end;
-      margin-bottom: 14px;
-    }
+    .masthead-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
     .masthead-eyebrow {
       font-family: var(--mono); font-size: 9px; letter-spacing: 4px;
       text-transform: uppercase; color: var(--ink-soft); margin-bottom: 6px;
     }
     .masthead-title {
       font-family: var(--serif); font-size: clamp(36px, 6vw, 72px);
-      font-weight: 900; letter-spacing: -3px; line-height: 1;
-      color: var(--ink);
+      font-weight: 900; letter-spacing: -3px; line-height: 1; color: var(--ink);
     }
     .masthead-title span { color: var(--accent); }
-    .masthead-meta {
-      text-align: right; font-family: var(--mono); font-size: 10px;
-      color: var(--ink-soft); line-height: 1.7;
-    }
+    .masthead-meta { text-align: right; font-family: var(--mono); font-size: 10px; color: var(--ink-soft); line-height: 1.7; }
 
-    /* ── Search bar ── */
+    /* ── Search ── */
     .search-row { display: flex; gap: 0; }
     .search-input {
       flex: 1; padding: 11px 16px;
       border: 2px solid var(--ink); border-right: none;
-      background: transparent; font-family: var(--mono); font-size: 13px;
+      background: transparent; font-family: var(--sans); font-size: 14px;
       color: var(--ink); transition: background 0.2s;
     }
     .search-input::placeholder { color: var(--ink-faint); }
@@ -81,146 +65,96 @@
       padding: 11px 28px;
       background: var(--ink); color: var(--paper);
       border: 2px solid var(--ink);
-      font-family: var(--mono); font-size: 11px; font-weight: 700;
+      font-family: var(--mono); font-size: 11px; font-weight: 500;
       letter-spacing: 3px; text-transform: uppercase;
       cursor: pointer; transition: all 0.2s;
     }
     .search-btn:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
     .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Category pills */
     .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; min-height: 22px; }
     .pill {
       padding: 2px 10px; border: 1px solid currentColor;
-      font-family: var(--mono); font-size: 9px; letter-spacing: 2px;
-      text-transform: uppercase; border-radius: 0;
+      font-family: var(--mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
     }
 
     /* ── Loading ── */
-    .loading {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; padding: 100px 0; gap: 28px;
-    }
+    .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 0; gap: 28px; }
     .loading-rings { position: relative; width: 64px; height: 64px; }
-    .ring {
-      position: absolute; inset: 0; border: 2px solid var(--ink);
-      border-radius: 50%; animation: ringPing 1.5s cubic-bezier(0,0,0.2,1) infinite;
-    }
+    .ring { position: absolute; inset: 0; border: 2px solid var(--ink); border-radius: 50%; animation: ringPing 1.5s cubic-bezier(0,0,0.2,1) infinite; }
     .ring:nth-child(2) { animation-delay: 0.3s; }
     .ring:nth-child(3) { animation-delay: 0.6s; }
-    .ring-core {
-      position: absolute; inset: 22px; background: var(--ink); border-radius: 50%;
-    }
-    @keyframes ringPing {
-      0%   { transform: scale(0.5); opacity: 1; }
-      100% { transform: scale(2.4); opacity: 0; }
-    }
-    .loading-text {
-      font-family: var(--mono); font-size: 13px; letter-spacing: 4px;
-      text-transform: uppercase; color: var(--ink);
-      animation: blink 1.2s step-end infinite;
-    }
+    .ring-core { position: absolute; inset: 22px; background: var(--ink); border-radius: 50%; }
+    @keyframes ringPing { 0%{transform:scale(0.5);opacity:1} 100%{transform:scale(2.4);opacity:0} }
+    .loading-text { font-family: var(--mono); font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: var(--ink); animation: blink 1.2s step-end infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    /* ── Empty state ── */
-    .empty {
-      text-align: center; padding: 100px 0;
-    }
+    /* ── Empty / Error ── */
+    .empty { text-align: center; padding: 100px 0; }
     .empty-icon { font-size: 72px; margin-bottom: 20px; filter: grayscale(0.3); }
-    .empty-title {
-      font-family: var(--serif); font-size: 26px; font-style: italic;
-      color: var(--ink-soft); margin-bottom: 10px;
-    }
+    .empty-title { font-family: var(--serif); font-size: 26px; font-style: italic; color: var(--ink-soft); margin-bottom: 10px; }
     .empty-sub { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); letter-spacing: 2px; }
+    .error-box { margin-top: 40px; padding: 18px 24px; border: 1px solid var(--accent); color: var(--accent); font-family: var(--mono); font-size: 13px; }
 
-    /* ── Error ── */
-    .error-box {
-      margin-top: 40px; padding: 18px 24px;
-      border: 1px solid var(--accent); color: var(--accent);
-      font-family: var(--mono); font-size: 13px;
+    /* ── AI Briefing Box ── */
+    .briefing-box {
+      background: var(--ink); color: var(--paper);
+      padding: 28px 36px; margin: 28px 0 0;
+      animation: fadeUp 0.5s ease both;
+    }
+    .briefing-label {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 5px;
+      text-transform: uppercase; color: var(--ink-faint); margin-bottom: 12px;
+    }
+    .briefing-text {
+      font-family: var(--sans); font-size: 15px; font-weight: 400;
+      line-height: 2; color: #e8e0d0;
+      word-break: keep-all; letter-spacing: -0.2px;
     }
 
     /* ── Edition banner ── */
-    .edition-banner {
-      text-align: center; padding: 28px 0 0;
-      border-bottom: 1px solid var(--rule); margin-bottom: 0;
-    }
-    .edition-eyebrow {
-      font-family: var(--mono); font-size: 9px; letter-spacing: 5px;
-      text-transform: uppercase; color: var(--ink-soft);
-    }
-    .edition-title {
-      font-family: var(--serif); font-size: clamp(22px, 4vw, 40px);
-      font-weight: 800; letter-spacing: -1px; color: var(--ink);
-      margin: 6px 0 22px;
-    }
+    .edition-banner { text-align: center; padding: 28px 0 0; border-bottom: 1px solid var(--rule); }
+    .edition-eyebrow { font-family: var(--mono); font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: var(--ink-soft); }
+    .edition-title { font-family: var(--serif); font-size: clamp(22px, 4vw, 40px); font-weight: 800; letter-spacing: -1px; color: var(--ink); margin: 6px 0 22px; }
     .edition-title em { color: var(--accent); font-style: italic; }
 
     /* ── Articles grid ── */
-    .articles-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0 36px;
-    }
+    .articles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 36px; }
 
-    /* ── Featured article (spans all 3 cols) ── */
+    /* ── Featured ── */
     .article-featured {
       grid-column: 1 / -1;
       display: grid; grid-template-columns: 1fr 1fr; gap: 36px;
-      border-top: 4px solid var(--ink);
-      border-bottom: 1px solid var(--rule);
-      padding: 28px 0 26px;
-      animation: fadeUp 0.6s ease both;
+      border-top: 4px solid var(--ink); border-bottom: 1px solid var(--rule);
+      padding: 28px 0 26px; animation: fadeUp 0.6s ease both;
     }
-    .article-featured .article-headline {
-      font-size: clamp(22px, 3.5vw, 34px); margin-bottom: 0;
-    }
-    .article-featured .article-body {
-      border-left: 1px solid var(--rule); padding-left: 36px;
-    }
+    .article-featured .article-headline { font-size: clamp(22px, 3.5vw, 34px); margin-bottom: 0; }
+    .article-featured .article-body { border-left: 1px solid var(--rule); padding-left: 36px; }
 
-    /* ── Regular article ── */
-    .article-card {
-      border-top: 1px solid var(--rule);
-      padding: 20px 0;
-      animation: fadeUp 0.6s ease both;
-    }
+    /* ── Card ── */
+    .article-card { border-top: 1px solid var(--rule); padding: 20px 0; animation: fadeUp 0.6s ease both; }
 
     /* ── Article internals ── */
-    .article-meta {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-    }
-    .article-cat {
-      font-family: var(--mono); font-size: 9px; font-weight: 700;
-      letter-spacing: 2px; text-transform: uppercase;
-      padding: 2px 8px; color: #fff;
-    }
-    .article-source {
-      font-family: var(--mono); font-size: 10px; color: var(--ink-soft);
-    }
+    .article-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .article-cat { font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; padding: 2px 8px; color: #fff; }
+    .article-source { font-family: var(--mono); font-size: 10px; color: var(--ink-soft); }
     .article-headline {
       font-family: var(--serif); font-size: clamp(16px, 2vw, 20px);
-      font-weight: 800; line-height: 1.28; color: var(--ink);
-      margin: 0 0 12px; letter-spacing: -0.4px;
+      font-weight: 700; line-height: 1.35; color: var(--ink);
+      margin: 0 0 12px; letter-spacing: -0.3px;
     }
-    .article-headline a {
-      color: inherit; text-decoration: none; transition: color 0.15s;
-    }
+    .article-headline a { color: inherit; text-decoration: none; transition: color 0.15s; }
     .article-headline a:hover { color: var(--accent); }
     .article-summary {
-      font-family: var(--korean); font-size: 13px; line-height: 1.85;
-      color: var(--ink-mid); margin: 0 0 14px;
+      font-family: var(--sans); font-size: 14px; font-weight: 400;
+      line-height: 1.95; color: var(--ink-mid);
+      margin: 0 0 14px; word-break: keep-all; letter-spacing: -0.2px;
     }
-    .article-footer {
-      display: flex; justify-content: space-between; align-items: center;
-    }
+    .article-footer { display: flex; justify-content: space-between; align-items: center; }
     .article-date { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); }
-    .article-sentiment {
-      font-family: var(--mono); font-size: 11px; font-weight: 700;
-      letter-spacing: 1px;
-    }
+    .article-sentiment { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 1px; }
 
-    /* ── Footer rule ── */
+    /* ── Footer ── */
     .footer-rule {
       margin-top: 48px; padding-top: 18px;
       border-top: 4px double var(--ink);
@@ -229,128 +163,83 @@
       color: var(--ink-faint); letter-spacing: 2px; text-transform: uppercase;
     }
 
-    /* ── Proxy setup notice ── */
+    /* ── Setup notice ── */
     .setup-notice {
       background: rgba(139,26,26,0.06); border: 1px solid rgba(139,26,26,0.3);
       padding: 16px 20px; margin-top: 12px;
-      font-family: var(--mono); font-size: 11px; color: var(--ink-mid);
-      line-height: 1.8;
+      font-family: var(--sans); font-size: 13px; color: var(--ink-mid); line-height: 1.8;
     }
     .setup-notice strong { color: var(--accent); }
 
-    /* ── Animation ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: none; }
-    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
 
-    /* ── Responsive ── */
     @media (max-width: 768px) {
       .wrapper { padding: 0 16px 60px; }
       .articles-grid { grid-template-columns: 1fr; }
       .article-featured { grid-template-columns: 1fr; gap: 0; }
       .article-featured .article-body { border-left: none; padding-left: 0; border-top: 1px solid var(--rule); padding-top: 16px; margin-top: 16px; }
       .masthead-top { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .briefing-box { padding: 20px; }
     }
   </style>
 </head>
 <body>
 <div class="wrapper">
 
-  <!-- ══ MASTHEAD ══ -->
   <header class="masthead">
     <div class="masthead-top">
       <div>
-        <div class="masthead-eyebrow">Global News Intelligence · AI-Curated Edition</div>
+        <div class="masthead-eyebrow">Korea News Intelligence · AI-Curated Edition</div>
         <div class="masthead-title">THE DAILY <span>BRIEF</span></div>
       </div>
       <div class="masthead-meta" id="metaDate"></div>
     </div>
-
-    <!-- Search -->
     <div class="search-row">
-      <input
-        id="searchInput"
-        class="search-input"
-        type="text"
-        placeholder="키워드 입력 후 Enter… (예: 트럼프 관세, AI 반도체, 기후변화, Bitcoin)"
-        autocomplete="off"
-      />
+      <input id="searchInput" class="search-input" type="text"
+        placeholder="키워드 입력 후 Enter… (예: 삼성전자, 금리 인상, 바이오 전망)"
+        autocomplete="off" />
       <button id="searchBtn" class="search-btn">Search</button>
     </div>
-
-    <!-- Category pills -->
     <div class="pill-row" id="pillRow"></div>
-
-    <!-- Proxy URL input (first-time setup) -->
     <div id="setupBox" style="margin-top:10px; display:none;">
-      <div class="search-row" style="gap:0;">
-        <input
-          id="proxyInput"
-          class="search-input"
-          type="password"
-          placeholder="접근 비밀번호를 입력하세요"
-          style="font-size:13px;"
-        />
+      <div class="search-row">
+        <input id="proxyInput" class="search-input" type="password" placeholder="접근 비밀번호를 입력하세요" />
         <button id="saveProxyBtn" class="search-btn" style="padding:11px 18px; font-size:10px;">ENTER</button>
       </div>
       <div class="setup-notice">
         <strong>🔐 비밀번호 인증 필요</strong><br>
-        이 앱은 비밀번호로 보호되어 있습니다.<br>
-        비밀번호를 입력하면 브라우저에 저장되어 다음부터는 자동 인증됩니다.
+        비밀번호를 입력하면 브라우저에 저장되어 다음부터 자동 인증됩니다.
       </div>
     </div>
   </header>
 
-  <!-- ══ MAIN CONTENT ══ -->
   <main id="main">
     <div class="empty" id="emptyState">
       <div class="empty-icon">📰</div>
       <div class="empty-title">오늘의 키워드를 입력하세요</div>
-      <div class="empty-sub">전 세계 뉴스를 실시간으로 수집합니다</div>
+      <div class="empty-sub">네이버 뉴스 · AI 요약 · 실시간 수집</div>
     </div>
   </main>
 
 </div>
-
 <script>
-// ══════════════════════════════════════════════
-//  CONFIG
-// ══════════════════════════════════════════════
 const PW_KEY     = 'daily_brief_pw';
 const WORKER_URL = 'https://drummy-news-proxy.drumismylife.workers.dev';
 const CATEGORY_COLORS = {
-  Politics:    '#c0392b', Economy:     '#16a085',
-  Technology:  '#2980b9', Science:     '#8e44ad',
-  Society:     '#e67e22', Culture:     '#d35400',
-  Sports:      '#27ae60', Health:      '#b03060',
-  Environment: '#1abc9c',
+  Politics:'#c0392b', Economy:'#16a085', Technology:'#2980b9', Science:'#8e44ad',
+  Society:'#e67e22', Culture:'#d35400', Sports:'#27ae60', Health:'#b03060', Environment:'#1abc9c',
 };
-const SENTIMENT_ICON  = { positive: '↑', neutral: '—', negative: '↓' };
-const SENTIMENT_COLOR = { positive: '#27ae60', neutral: '#7a6e5e', negative: '#c0392b' };
-const COUNTRY_FLAGS   = {
-  usa:'🇺🇸', uk:'🇬🇧', korea:'🇰🇷', japan:'🇯🇵', china:'🇨🇳',
-  germany:'🇩🇪', france:'🇫🇷', india:'🇮🇳', australia:'🇦🇺',
-  canada:'🇨🇦', brazil:'🇧🇷', russia:'🇷🇺', italy:'🇮🇹',
-  spain:'🇪🇸', netherlands:'🇳🇱', sweden:'🇸🇪', singapore:'🇸🇬',
-};
+const SENTIMENT_ICON  = { positive:'↑', neutral:'—', negative:'↓' };
+const SENTIMENT_COLOR = { positive:'#27ae60', neutral:'#7a6e5e', negative:'#c0392b' };
+const SENTIMENT_NORM  = { positive:'positive', negative:'negative', neutral:'neutral', mixed:'neutral', unknown:'neutral' };
 
-// ══════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════
-let savedPw   = localStorage.getItem(PW_KEY) || '';
+let savedPw = localStorage.getItem(PW_KEY) || '';
 let isLoading = false;
 
-// ══════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   renderDate();
   checkAuth();
-
-  document.getElementById('searchInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') doSearch();
-  });
+  document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
   document.getElementById('searchBtn').addEventListener('click', doSearch);
   document.getElementById('saveProxyBtn')?.addEventListener('click', savePassword);
 });
@@ -358,13 +247,12 @@ document.addEventListener('DOMContentLoaded', () => {
 function renderDate() {
   const d = new Date();
   document.getElementById('metaDate').innerHTML =
-    `${d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}<br>
+    `${d.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}<br>
      <span style="font-size:9px;letter-spacing:2px;">AI-CURATED EDITION</span>`;
 }
 
 function checkAuth() {
-  const box = document.getElementById('setupBox');
-  box.style.display = savedPw ? 'none' : 'block';
+  document.getElementById('setupBox').style.display = savedPw ? 'none' : 'block';
 }
 
 function savePassword() {
@@ -376,13 +264,9 @@ function savePassword() {
   showToast('✓ 인증 완료');
 }
 
-// ══════════════════════════════════════════════
-//  SEARCH
-// ══════════════════════════════════════════════
 async function doSearch() {
   const keyword = document.getElementById('searchInput').value.trim();
   if (!keyword || isLoading) return;
-
   if (!savedPw) {
     document.getElementById('setupBox').style.display = 'block';
     document.getElementById('proxyInput').focus();
@@ -402,36 +286,26 @@ async function doSearch() {
     });
 
     if (response.status === 401) {
-      savedPw = '';
-      localStorage.removeItem(PW_KEY);
+      savedPw = ''; localStorage.removeItem(PW_KEY);
       document.getElementById('setupBox').style.display = 'block';
       throw new Error('비밀번호가 틀렸습니다. 다시 입력해주세요.');
     }
-
-    if (response.status === 429) {
-      throw new Error('요청이 너무 많습니다. 1분 후 다시 시도해주세요. (Rate limit 초과)');
-    }
-
+    if (response.status === 429) throw new Error('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
-      throw new Error(err.error?.message || `HTTP ${response.status}`);
+      throw new Error(err.error || `HTTP ${response.status}`);
     }
 
     const data = await response.json();
+    if (data.error) throw new Error(data.error);
 
-    if (data.error) {
-      const msg = data.error.message || '';
-      if (msg.includes('rate limit')) throw new Error('요청이 너무 많습니다. 1분 후 다시 시도해주세요.');
-      throw new Error(msg || '알 수 없는 API 오류');
-    }
-
-    const articles = data.articles;
+    const { briefing, articles } = data;
     if (!Array.isArray(articles) || articles.length === 0) throw new Error('기사를 찾을 수 없습니다.');
 
-    renderArticles(keyword, articles);
+    renderArticles(keyword, briefing, articles);
 
   } catch (err) {
-    renderMain(`<div class="error-box">⚠ ${err.message || '알 수 없는 오류가 발생했습니다.'}</div>`);
+    renderMain(`<div class="error-box">⚠ ${escHtml(err.message || '알 수 없는 오류')}</div>`);
     console.error(err);
   } finally {
     isLoading = false;
@@ -439,29 +313,28 @@ async function doSearch() {
   }
 }
 
-// ══════════════════════════════════════════════
-//  RENDER
-// ══════════════════════════════════════════════
-function renderArticles(keyword, articles) {
+function renderArticles(keyword, briefing, articles) {
   const categories = [...new Set(articles.map(a => a.category))];
 
-  // Pills
   document.getElementById('pillRow').innerHTML = categories.map(cat => {
     const color = CATEGORY_COLORS[cat] || '#555';
     return `<span class="pill" style="color:${color};border-color:${color};">${cat}</span>`;
   }).join('');
 
-  // Build HTML
   const featured = articles[0];
   const rest = articles.slice(1);
 
   const html = `
     <div class="edition-banner">
-      <div class="edition-eyebrow">Special Edition</div>
-      <div class="edition-title">
-        "<em>${escHtml(keyword)}</em>" — World Coverage
-      </div>
+      <div class="edition-eyebrow">AI News Brief</div>
+      <div class="edition-title">"<em>${escHtml(keyword)}</em>" 뉴스 분석</div>
     </div>
+
+    ${briefing ? `
+    <div class="briefing-box">
+      <div class="briefing-label">▪ AI 종합 브리핑</div>
+      <p class="briefing-text">${escHtml(briefing)}</p>
+    </div>` : ''}
 
     <div class="articles-grid">
       ${featuredHTML(featured)}
@@ -469,30 +342,30 @@ function renderArticles(keyword, articles) {
     </div>
 
     <div class="footer-rule">
-      <span>The Daily Brief · AI-Curated</span>
-      <span>${articles.length} Articles · ${categories.length} Categories</span>
-      <span>Powered by Claude</span>
-    </div>
-  `;
+      <span>The Daily Brief · 네이버 뉴스</span>
+      <span>${articles.length}건 · ${categories.length}개 카테고리</span>
+      <span>요약 by Claude</span>
+    </div>`;
 
   renderMain(html);
 }
 
+function normSentiment(s) {
+  return SENTIMENT_NORM[(s || '').toLowerCase()] || 'neutral';
+}
+
 function featuredHTML(a) {
   const catColor = CATEGORY_COLORS[a.category] || '#555';
-  const flag = getFlag(a.country);
-  const sent = a.sentiment || 'neutral';
+  const sent = normSentiment(a.sentiment);
   return `
     <div class="article-featured">
       <div>
         <div class="article-meta">
           <span class="article-cat" style="background:${catColor};">${escHtml(a.category)}</span>
-          <span class="article-source">${flag} ${escHtml(a.source)}</span>
+          <span class="article-source">🇰🇷 ${escHtml(a.source)}</span>
         </div>
         <h2 class="article-headline" style="font-size:clamp(24px,3.5vw,36px);">
-          ${a.url
-            ? `<a href="${escHtml(a.url)}" target="_blank" rel="noopener noreferrer">${escHtml(a.title)}</a>`
-            : escHtml(a.title)}
+          ${a.url ? `<a href="${escHtml(a.url)}" target="_blank" rel="noopener noreferrer">${escHtml(a.title)}</a>` : escHtml(a.title)}
         </h2>
       </div>
       <div class="article-body">
@@ -500,7 +373,7 @@ function featuredHTML(a) {
         <div class="article-footer">
           <span class="article-date">${escHtml(a.date)}</span>
           <span class="article-sentiment" style="color:${SENTIMENT_COLOR[sent]};">
-            ${SENTIMENT_ICON[sent]} ${sent.toUpperCase()}
+            ${SENTIMENT_ICON[sent]} ${sent === 'positive' ? '긍정' : sent === 'negative' ? '부정' : '중립'}
           </span>
         </div>
       </div>
@@ -509,23 +382,20 @@ function featuredHTML(a) {
 
 function cardHTML(a, i) {
   const catColor = CATEGORY_COLORS[a.category] || '#555';
-  const flag = getFlag(a.country);
-  const sent = a.sentiment || 'neutral';
+  const sent = normSentiment(a.sentiment);
   return `
-    <div class="article-card" style="animation-delay:${i * 0.08}s;">
+    <div class="article-card" style="animation-delay:${i * 0.06}s;">
       <div class="article-meta">
         <span class="article-cat" style="background:${catColor};">${escHtml(a.category)}</span>
-        <span class="article-source">${flag} ${escHtml(a.source)}</span>
+        <span class="article-source">🇰🇷 ${escHtml(a.source)}</span>
       </div>
       <h3 class="article-headline">
-        ${a.url
-          ? `<a href="${escHtml(a.url)}" target="_blank" rel="noopener noreferrer">${escHtml(a.title)}</a>`
-          : escHtml(a.title)}
+        ${a.url ? `<a href="${escHtml(a.url)}" target="_blank" rel="noopener noreferrer">${escHtml(a.title)}</a>` : escHtml(a.title)}
       </h3>
       <p class="article-summary">${escHtml(a.summary)}</p>
       <div class="article-footer">
         <span class="article-date">${escHtml(a.date)}</span>
-        <span class="article-sentiment" style="color:${SENTIMENT_COLOR[sent]};">${SENTIMENT_ICON[sent]}</span>
+        <span class="article-sentiment" style="color:${SENTIMENT_COLOR[sent]};">${SENTIMENT_ICON[sent]} ${sent === 'positive' ? '긍정' : sent === 'negative' ? '부정' : '중립'}</span>
       </div>
     </div>`;
 }
@@ -534,50 +404,23 @@ function loadingHTML() {
   return `
     <div class="loading">
       <div class="loading-rings">
-        <div class="ring"></div>
-        <div class="ring"></div>
-        <div class="ring"></div>
+        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
         <div class="ring-core"></div>
       </div>
-      <div class="loading-text">GATHERING NEWS...</div>
+      <div class="loading-text">뉴스 수집 중...</div>
     </div>`;
 }
 
-// ══════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════
-function extractJsonArray(text) {
-  // Find the outermost [...] block, even if there's surrounding text
-  const start = text.indexOf('[');
-  const end   = text.lastIndexOf(']');
-  if (start === -1 || end === -1 || end <= start) throw new Error('응답에서 JSON 배열을 찾을 수 없습니다.');
-  try {
-    const parsed = JSON.parse(text.slice(start, end + 1));
-    if (!Array.isArray(parsed)) throw new Error('JSON이 배열 형식이 아닙니다.');
-    return parsed;
-  } catch (e) {
-    throw new Error(`JSON 파싱 실패: ${e.message}`);
-  }
-}
-
-function renderMain(html) {
-  document.getElementById('main').innerHTML = html;
-}
+function renderMain(html) { document.getElementById('main').innerHTML = html; }
 function setSearchBtn(loading) {
   const btn = document.getElementById('searchBtn');
-  btn.textContent = loading ? 'SEARCHING' : 'SEARCH';
+  btn.textContent = loading ? '검색 중' : 'SEARCH';
   btn.disabled = loading;
 }
-function getFlag(country) {
-  if (!country) return '🌐';
-  const key = country.toLowerCase();
-  for (const [k, v] of Object.entries(COUNTRY_FLAGS)) {
-    if (key.includes(k)) return v;
-  }
-  return '🌐';
-}
 function escHtml(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str || '')
+    .replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function showToast(msg) {
   const t = document.createElement('div');
@@ -585,7 +428,7 @@ function showToast(msg) {
   Object.assign(t.style, {
     position:'fixed', bottom:'24px', right:'24px', zIndex:9999,
     background:'#1a1208', color:'#f4efe4',
-    fontFamily:"'Courier Prime', monospace", fontSize:'12px', letterSpacing:'1px',
+    fontFamily:"'DM Mono', monospace", fontSize:'12px', letterSpacing:'1px',
     padding:'10px 20px', border:'1px solid #c8bea8',
   });
   document.body.appendChild(t);

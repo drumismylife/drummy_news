@@ -45,8 +45,8 @@ export default {
       if (!naverRes.ok) throw new Error(`Naver API ${naverRes.status}`);
       const naverData = await naverRes.json();
       articles = (naverData.items || []).map(item => ({
-        title:       item.title.replace(/<[^>]+>/g, ''),
-        description: item.description.replace(/<[^>]+>/g, ''),
+        title:       decodeEntities(item.title),
+        description: decodeEntities(item.description),
         link:        item.originallink || item.link,
         pubDate:     item.pubDate,
       }));
@@ -63,12 +63,12 @@ export default {
       `[${i}] ${a.title} / ${a.description}`
     ).join('\n');
 
-    const prompt = `아래 뉴스 기사 각각에 대해 JSON 배열만 출력하세요 (다른 텍스트 없이):
-[{"i":0,"summary":"한 문장 요약","category":"Politics|Economy|Technology|Science|Society|Culture|Sports|Health|Environment","sentiment":"positive|neutral|negative"}]
+    const prompt = `아래 뉴스 기사들을 분석해 JSON만 출력하세요 (다른 텍스트 없이):
+{"briefing":"전체 뉴스 동향 2문장 한국어 요약","items":[{"i":0,"summary":"핵심 한 문장 요약","category":"Politics|Economy|Technology|Science|Society|Culture|Sports|Health|Environment","sentiment":"positive|neutral|negative"}]}
 
 ${articleList}`;
 
-    let claudeItems;
+    let claudeItems, briefing = '';
     try {
       const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -87,10 +87,12 @@ ${articleList}`;
       const claudeData = await claudeRes.json();
       if (claudeData.error) throw new Error(claudeData.error.message);
 
-      const text  = (claudeData.content || []).filter(b => b.type === 'text').pop()?.text || '';
-      const start = text.indexOf('[');
-      const end   = text.lastIndexOf(']');
-      claudeItems = JSON.parse(text.slice(start, end + 1));
+      const text   = (claudeData.content || []).filter(b => b.type === 'text').pop()?.text || '';
+      const start  = text.indexOf('{');
+      const end    = text.lastIndexOf('}');
+      const parsed = JSON.parse(text.slice(start, end + 1));
+      briefing     = parsed.briefing || '';
+      claudeItems  = parsed.items || [];
 
     } catch (err) {
       return cors(json({ error: "Claude API 오류", detail: err.message }), 500, env);
@@ -113,9 +115,17 @@ ${articleList}`;
       };
     });
 
-    return cors(json({ articles: result }), 200, env);
+    return cors(json({ briefing, articles: result }), 200, env);
   },
 };
+
+function decodeEntities(str) {
+  return (str || '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&#39;/g, "'").replace(/&#x27;/g, "'");
+}
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
