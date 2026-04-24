@@ -34,7 +34,7 @@ export default {
     let articles;
     try {
       const naverRes = await fetch(
-        `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(keyword)}&display=5&sort=date`,
+        `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(keyword)}&display=20&sort=date`,
         {
           headers: {
             'X-Naver-Client-Id':     env.NAVER_CLIENT_ID,
