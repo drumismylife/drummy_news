@@ -337,22 +337,9 @@ const COUNTRY_FLAGS   = {
   spain:'🇪🇸', netherlands:'🇳🇱', sweden:'🇸🇪', singapore:'🇸🇬',
 };
 
-const SYSTEM_PROMPT = `You are a news aggregation assistant. The user gives you a keyword or topic.
-Search the web for 6–8 recent news articles from diverse international sources on that topic.
-
-Return ONLY a JSON array — no markdown fences, no preamble:
-[
-  {
-    "title": "Full article headline",
-    "source": "Publication name",
-    "country": "Country/Region",
-    "date": "Published date (e.g. Apr 22, 2026)",
-    "summary": "2–3 sentence summary in Korean",
-    "category": "One of: Politics|Economy|Technology|Science|Society|Culture|Sports|Health|Environment",
-    "url": "Article URL or empty string",
-    "sentiment": "positive|neutral|negative"
-  }
-]`;
+const SYSTEM_PROMPT = `You are a news assistant. Find 5 recent news articles on the given topic from diverse sources.
+Return ONLY a JSON array with no extra text:
+[{"title":"...","source":"...","country":"...","date":"...","summary":"2 sentence Korean summary","category":"Politics|Economy|Technology|Science|Society|Culture|Sports|Health|Environment","url":"...","sentiment":"positive|neutral|negative"}]`;
 
 // ══════════════════════════════════════════════
 //  STATE
@@ -420,7 +407,7 @@ async function doSearch() {
       body: JSON.stringify({
         _pw: savedPw,
         model: 'claude-sonnet-4-5',
-        max_tokens: 2000,
+        max_tokens: 1200,
         system: SYSTEM_PROMPT,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: `Search recent news about: ${keyword}` }],
@@ -434,12 +421,26 @@ async function doSearch() {
       throw new Error('비밀번호가 틀렸습니다. 다시 입력해주세요.');
     }
 
+    if (response.status === 429) {
+      throw new Error('요청이 너무 많습니다. 1분 후 다시 시도해주세요. (Rate limit 초과)');
+    }
+
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       throw new Error(err.error?.message || `HTTP ${response.status}`);
     }
 
     const data = await response.json();
+
+    // Anthropic sometimes returns error object with 200 status via proxy
+    if (data.error) {
+      const msg = data.error.message || '';
+      if (msg.includes('rate limit') || data.error.type === 'rate_limit_error') {
+        throw new Error('요청이 너무 많습니다. 1분 후 다시 시도해주세요. (Rate limit 초과)');
+      }
+      throw new Error(msg || '알 수 없는 API 오류');
+    }
+
     const textBlock = (data.content || []).filter(b => b.type === 'text').pop();
     if (!textBlock) throw new Error('응답에서 텍스트를 찾을 수 없습니다.');
 
