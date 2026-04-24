@@ -420,7 +420,7 @@ async function doSearch() {
       body: JSON.stringify({
         _pw: savedPw,
         model: 'claude-sonnet-4-5',
-        max_tokens: 1500,
+        max_tokens: 2000,
         system: SYSTEM_PROMPT,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: `Search recent news about: ${keyword}` }],
@@ -443,9 +443,8 @@ async function doSearch() {
     const textBlock = (data.content || []).filter(b => b.type === 'text').pop();
     if (!textBlock) throw new Error('응답에서 텍스트를 찾을 수 없습니다.');
 
-    let raw = textBlock.text.trim().replace(/```json|```/g, '').trim();
-    const articles = JSON.parse(raw);
-    if (!Array.isArray(articles) || articles.length === 0) throw new Error('기사를 찾을 수 없습니다.');
+    const articles = extractJsonArray(textBlock.text);
+    if (!articles || articles.length === 0) throw new Error('기사를 찾을 수 없습니다.');
 
     renderArticles(keyword, articles);
 
@@ -565,6 +564,20 @@ function loadingHTML() {
 // ══════════════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════════════
+function extractJsonArray(text) {
+  // Find the outermost [...] block, even if there's surrounding text
+  const start = text.indexOf('[');
+  const end   = text.lastIndexOf(']');
+  if (start === -1 || end === -1 || end <= start) throw new Error('응답에서 JSON 배열을 찾을 수 없습니다.');
+  try {
+    const parsed = JSON.parse(text.slice(start, end + 1));
+    if (!Array.isArray(parsed)) throw new Error('JSON이 배열 형식이 아닙니다.');
+    return parsed;
+  } catch (e) {
+    throw new Error(`JSON 파싱 실패: ${e.message}`);
+  }
+}
+
 function renderMain(html) {
   document.getElementById('main').innerHTML = html;
 }
