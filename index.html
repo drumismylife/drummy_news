@@ -154,6 +154,23 @@
     .article-date { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); }
     .article-sentiment { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 1px; }
 
+    /* ── Date separator ── */
+    .date-separator {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 14px;
+      padding: 28px 0 4px; margin-top: 4px;
+      border-top: 2px solid var(--ink);
+    }
+    .date-separator-text {
+      font-family: var(--mono); font-size: 11px; font-weight: 500;
+      letter-spacing: 3px; color: var(--ink); white-space: nowrap;
+    }
+    .date-separator-rule { flex: 1; height: 1px; background: var(--rule); }
+    .date-separator-count {
+      font-family: var(--mono); font-size: 10px; color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
     /* ── Footer ── */
     .footer-rule {
       margin-top: 48px; padding-top: 18px;
@@ -324,6 +341,25 @@ function renderArticles(keyword, briefing, articles) {
   const featured = articles[0];
   const rest = articles.slice(1);
 
+  // 날짜별 그룹핑 (Naver가 최신순으로 주므로 순서 유지)
+  const groups = [];
+  const seen = {};
+  rest.forEach(a => {
+    const key = a.date || '날짜 미상';
+    if (!seen[key]) { seen[key] = []; groups.push({ date: key, items: seen[key] }); }
+    seen[key].push(a);
+  });
+
+  let cardIdx = 1;
+  const groupsHTML = groups.map(({ date, items }) => `
+    <div class="date-separator">
+      <span class="date-separator-text">${escHtml(date)}</span>
+      <span class="date-separator-rule"></span>
+      <span class="date-separator-count">${items.length}건</span>
+    </div>
+    ${items.map(a => cardHTML(a, cardIdx++)).join('')}
+  `).join('');
+
   const html = `
     <div class="edition-banner">
       <div class="edition-eyebrow">AI News Brief</div>
@@ -338,7 +374,7 @@ function renderArticles(keyword, briefing, articles) {
 
     <div class="articles-grid">
       ${featuredHTML(featured)}
-      ${rest.map((a, i) => cardHTML(a, i + 1)).join('')}
+      ${groupsHTML}
     </div>
 
     <div class="footer-rule">
